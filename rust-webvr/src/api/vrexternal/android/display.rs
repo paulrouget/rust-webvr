@@ -107,7 +107,8 @@ impl VRDisplay for VRExternalDisplay {
     }
 
     fn immediate_frame_data(&self, near_z: f64, far_z: f64) -> VRFrameData {
-        let sys = &self.system_state;
+        // let sys = &self.system_state;
+        let sys = self.shmem.as_mut().pull_system(&|_| true);
 
         let mut data = VRFrameData::default();
 
