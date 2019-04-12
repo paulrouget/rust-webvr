@@ -4,7 +4,7 @@ extern crate android_injected_glue;
 extern crate gleam;
 use gleam::gl::{self, Gl, GLenum, GLint, GLuint};
 extern crate glutin;
-use glutin::{Event, GlContext, WindowEvent};
+use glutin::{Event, WindowEvent};
 extern crate cgmath;
 extern crate image;
 use self::cgmath::*;
@@ -455,22 +455,22 @@ pub fn main() {
 
     let mut events_loop = glutin::EventsLoop::new();
     let window_builder = glutin::WindowBuilder::new().with_dimensions(window_dimensions);
-    let context = glutin::ContextBuilder::new().with_gl(gl_version());
-    let window = glutin::GlWindow::new(window_builder, context, &events_loop).unwrap();
+    let context = glutin::ContextBuilder::new()
+        .with_gl(gl_version())
+        .build_windowed(window_builder, &events_loop).unwrap();
 
-    unsafe {
-        window.make_current().unwrap();
-    }
+    let context = unsafe { context.make_current().unwrap() };
+
     let gl = match gleam::gl::GlType::default() {
-        gleam::gl::GlType::Gl => unsafe { gleam::gl::GlFns::load_with(|s| window.get_proc_address(s) as *const _) },
-        gleam::gl::GlType::Gles => unsafe { gleam::gl::GlesFns::load_with(|s| window.get_proc_address(s) as *const _) },
+        gleam::gl::GlType::Gl => unsafe { gleam::gl::GlFns::load_with(|s| context.get_proc_address(s) as *const _) },
+        gleam::gl::GlType::Gles => unsafe { gleam::gl::GlesFns::load_with(|s| context.get_proc_address(s) as *const _) },
     };
     let gl = &*gl;
 
 
     let screen_fbo = gl.get_integer_v(gl::FRAMEBUFFER_BINDING) as u32;
-    let screen_dpi = window.get_hidpi_factor();
-    let screen_size = window.get_inner_size().unwrap().to_physical(screen_dpi);
+    let screen_dpi = context.window().get_hidpi_factor();
+    let screen_size = context.window().get_inner_size().unwrap().to_physical(screen_dpi);
     let vao = gl.gen_vertex_arrays(1)[0];
     gl.bind_vertex_array(vao);
     gl.disable(gl::SCISSOR_TEST);
@@ -689,7 +689,7 @@ pub fn main() {
 
         // We don't need to swap buffer on Android because Daydream view is on top of the window.
         if !cfg!(target_os = "android") {
-            match window.swap_buffers() {
+            match context.swap_buffers() {
                 Err(error) => {
                     match error {
                         glutin::ContextError::ContextLost => {},

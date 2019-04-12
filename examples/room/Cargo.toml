@@ -5,7 +5,7 @@ authors = ["Imanol Fernandez <mortimergoro@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
-glutin = "0.19"
+glutin = "0.21.0-rc2"
 gleam = "0.4"
 cgmath = "0.12"
 image = "0.12"

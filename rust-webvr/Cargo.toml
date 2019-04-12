@@ -19,7 +19,7 @@ exclude = [
 build = "build.rs"
 
 [features]
-default = ["vrexternal", "openvr", "mock"]
+default = ["vrexternal", "openvr", "mock", "glwindow"]
 vrexternal = []
 glwindow = ["euclid", "gleam", "glutin", "winit"]
 openvr = ["libloading"]
@@ -36,9 +36,9 @@ ovr-mobile-sys = { version = "0.4", optional = true }
 libc = "0.2"
 euclid = { version = "0.19", optional = true }
 gleam = { version = "0.6", optional = true }
-glutin = { version = "0.19", optional = true }
-winit = { version = "0.18", optional = true }
+glutin = { version = "0.21.0-rc2", optional = true }
+winit = { version = "0.19", optional = true }
 
 [build-dependencies]
-gl_generator = "0.10"
+gl_generator = "0.11"
 bindgen = "0.46"
